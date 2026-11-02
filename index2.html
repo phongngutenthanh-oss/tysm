@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Quiz ❤️</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#ff9aaf,#ffd1dc,#f7a8c4);
+  overflow: hidden;
+}
+.container {
+  width: 90%;
+  max-width: 430px;
+  padding: 30px;
+  text-align: center;
+  background: rgba(255,255,255,.9);
+  border-radius: 25px;
+  box-shadow: 0 10px 40px #c94d7960;
+  position: relative;
+  z-index: 1;
+}
+h1 { color: #e84375; }
+h2 { color: #d6336c; }
+p { color: #805060; }
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 15px;
+  background: #ff7fa5;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: .2s;
+}
+button:hover {
+  background: #e84375;
+  transform: scale(1.03);
+}
+.answer {
+  background: #ffe1eb;
+  color: #b52c60;
+}
+.answer.selected {
+  background: #e84375;
+  color: white;
+}
+#result {
+  display: none;
+}
+.heart {
+  position: fixed;
+  bottom: -30px;
+  animation: fly 6s linear infinite;
+  color: #ff477e;
+  pointer-events: none;
+}
+@keyframes fly {
+  to {
+    transform: translateY(-110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+#progress {
+  color: #e84375;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="quiz">
+  <h1>❤️ LOVE QUIZ ❤️</h1>
+  <p>Hãy trả lời thật lòng nhé!</p>
+  <div id="progress"></div>
+  <h2 id="question"></h2>
+  <div id="answers"></div>
+  <button onclick="nextQuestion()" id="next">
+    Tiếp theo ❤️
+  </button>
+</div>
+
+<div class="container" id="result">
+  <h1>💗 KẾT QUẢ 💗</h1>
+  <h2 id="score"></h2>
+  <p id="message"></p>
+  <h1>🌹❤️🌹</h1>
+  <p>Cảm ơn bạn đã tham gia!</p>
+  <button onclick="restart()">Làm lại 💕</button>
+</div>
+
+<script>
+const questions = [
+ {
+  q: "Bạn có tin vào tình yêu không?",
+  a: ["Có ❤️", "Không", "Tùy duyên"]
+ },
+ {
+  q: "Bạn thích kiểu tình yêu nào?",
+  a: ["Lãng mạn 💗", "Hài hước 😂", "Chân thành"]
+ },
+ {
+  q: "Bạn có thích được quan tâm không?",
+  a: ["Rất thích", "Bình thường", "Không cần"]
+ },
+ {
+  q: "Nếu thích một người, bạn sẽ?",
+  a: ["Chủ động ❤️", "Âm thầm quan tâm", "Chờ người ấy"]
+ },
+ {
+  q: "Điều quan trọng nhất trong tình yêu?",
+  a: ["Chung thủy", "Tin tưởng", "Thấu hiểu"]
+ }
+];
+
+let current = 0;
+let answers = [];
+let selected = -1;
+
+function showQuestion() {
+  selected = -1;
+  document.getElementById("progress").innerText =
+    `Câu hỏi ${current + 1}/${questions.length}`;
+
+  document.getElementById("question").innerText =
+    questions[current].q;
+
+  const box = document.getElementById("answers");
+  box.innerHTML = "";
+
+  questions[current].a.forEach((answer, index) => {
+    const btn = document.createElement("button");
+    btn.innerText = answer;
+    btn.className = "answer";
+    btn.onclick = () => {
+      selected = index;
+      document.querySelectorAll(".answer")
+        .forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+    };
+    box.appendChild(btn);
+  });
+
+  document.getElementById("next").innerText =
+    current === questions.length - 1
+    ? "Xem kết quả 💖"
+    : "Tiếp theo ❤️";
+}
+
+function nextQuestion() {
+  if (selected === -1) {
+    alert("Hãy chọn một đáp án nhé! ❤️");
+    return;
+  }
+
+  answers.push(selected);
+  current++;
+
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("result").style.display = "block";
+
+  const total = answers.filter(a => a === 0).length;
+
+  document.getElementById("score").innerText =
+    `${total}/${questions.length} 💕`;
+
+  let message = "";
+
+  if (total >= 4) {
+    message = "Bạn là một người rất giàu tình cảm! Trái tim bạn luôn tràn ngập yêu thương. ❤️";
+  } else if (total >= 2) {
+    message = "Bạn có một trái tim ấm áp, nhưng vẫn còn chút bí ẩn! 🌷";
+  } else {
+    message = "Bạn là người khá khó đoán trong tình yêu. Hãy để trái tim dẫn lối nhé! 💗";
+  }
+
+  document.getElementById("message").innerText = message;
+}
+
+function restart() {
+  current = 0;
+  answers = [];
+  document.getElementById("result").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  showQuestion();
+}
+
+showQuestion();
+
+// Hiệu ứng trái tim bay
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = "❤️";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (15 + Math.random() * 20) + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}, 500);
+</script>
+
+</body>
+</html>
